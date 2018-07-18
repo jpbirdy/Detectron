@@ -11,12 +11,30 @@ This document provides brief tutorials covering Detectron for inference and trai
 To run inference on a directory of image files (`demo/*.jpg` in this example), you can use the `infer_simple.py` tool. In this example, we're using an end-to-end trained Mask R-CNN model with a ResNet-101-FPN backbone from the model zoo:
 
 ```
-python2 tools/infer_simple.py \
+python tools/infer_simple.py \
     --cfg configs/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml \
     --output-dir /tmp/detectron-visualizations \
     --image-ext jpg \
     --wts https://s3-us-west-2.amazonaws.com/detectron/35861858/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml.02_32_51.SgT4y1cO/output/train/coco_2014_train:coco_2014_valminusminival/generalized_rcnn/model_final.pkl \
     demo
+```
+
+```python
+python tools/infer_simple.py \
+--cfg configs/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml  \
+--output-dir detectron-visualizations \
+--image-ext jpg  \
+--wts detectron-visualizations/model_final.pkl \
+test_pics
+```
+
+```python
+python tools/infer_simple.py \
+--cfg configs/12_2017_baselines/e2e_mask_rcnn_X-101-64x4d-FPN_1x.yaml  \
+--output-dir detectron-visualizations \
+--image-ext jpg  \
+--wts detectron-visualizations/e2e_mask_rcnn_X-101-64x4d-FPN_1x.pkl \
+test_pics
 ```
 
 Detectron should automatically download the model from the URL specified by the `--wts` argument. This tool will output visualizations of the detections in PDF format in the directory specified by `--output-dir`. Here's an example of the output you should expect to see (for copyright information about the demo images see [`demo/NOTICE`](demo/NOTICE)).
@@ -35,7 +53,7 @@ Detectron should automatically download the model from the URL specified by the 
 This example shows how to run an end-to-end trained Mask R-CNN model from the model zoo using a single GPU for inference. As configured, this will run inference on all images in `coco_2014_minival` (which must be properly installed).
 
 ```
-python2 tools/test_net.py \
+python tools/test_net.py \
     --cfg configs/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml \
     TEST.WEIGHTS https://s3-us-west-2.amazonaws.com/detectron/35861858/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml.02_32_51.SgT4y1cO/output/train/coco_2014_train:coco_2014_valminusminival/generalized_rcnn/model_final.pkl \
     NUM_GPUS 1
@@ -44,7 +62,7 @@ python2 tools/test_net.py \
 Running inference with the same model using `$N` GPUs (e.g., `N=8`).
 
 ```
-python2 tools/test_net.py \
+python tools/test_net.py \
     --cfg configs/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml \
     --multi-gpu-testing \
     TEST.WEIGHTS https://s3-us-west-2.amazonaws.com/detectron/35861858/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml.02_32_51.SgT4y1cO/output/train/coco_2014_train:coco_2014_valminusminival/generalized_rcnn/model_final.pkl \
@@ -61,7 +79,7 @@ This is a tiny tutorial showing how to train a model on COCO. The model will be 
 #### 1. Training with 1 GPU
 
 ```
-python2 tools/train_net.py \
+python tools/train_net.py \
     --cfg configs/getting_started/tutorial_1gpu_e2e_faster_rcnn_R-50-FPN.yaml \
     OUTPUT_DIR /tmp/detectron-output
 ```
@@ -78,7 +96,7 @@ python2 tools/train_net.py \
 We've also provided configs to illustrate training with 2, 4, and 8 GPUs using learning schedules that will be approximately equivalent to the one used with 1 GPU above. The configs are located at: `configs/getting_started/tutorial_{2,4,8}gpu_e2e_faster_rcnn_R-50-FPN.yaml`. For example, launching a training job with 2 GPUs will look like this:
 
 ```
-python2 tools/train_net.py \
+python tools/train_net.py \
     --multi-gpu-testing \
     --cfg configs/getting_started/tutorial_2gpu_e2e_faster_rcnn_R-50-FPN.yaml \
     OUTPUT_DIR /tmp/detectron-output

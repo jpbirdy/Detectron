@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 # Copyright (c) 2017-present, Facebook, Inc.
 #
@@ -22,10 +22,10 @@ box detection, yet another model to predict masks, and yet another model to
 predict keypoints.
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
+
 
 import argparse
 import cv2  # NOQA (Must import before importing caffe2 due to bug in cv2)
@@ -56,10 +56,9 @@ c2_utils.import_detectron_ops()
 cv2.ocl.setUseOpenCL(False)
 
 # infer.py
-#   --im [path/to/image.jpg] \
-#   --rpn-model [path/to/rpn/model.pkl] \
-#   --rpn-cfg [path/to/rpn/config.yaml] \
-#   --output-dir [path/to/output/dir] \
+#   --im [path/to/image.jpg]
+#   --rpn-model [path/to/rpn/model.pkl]
+#   --rpn-config [path/to/rpn/config.yaml]
 #   [model1] [config1] [model2] [config2] ...
 
 
@@ -91,7 +90,7 @@ def parse_args():
     )
     parser.add_argument(
         'models_to_run',
-        help='pairs of models & configs, listed like so: [pkl1] [yaml1] [pkl2] [yaml2] ...',
+        help='list of pkl, yaml pairs',
         default=None,
         nargs=argparse.REMAINDER
     )

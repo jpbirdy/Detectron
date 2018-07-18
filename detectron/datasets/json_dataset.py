@@ -20,13 +20,13 @@ the COCO json format and use the existing code; it is not recommended to write
 code to support new dataset formats.
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
+
 
 import copy
-import cPickle as pickle
+import pickle as pickle
 import logging
 import numpy as np
 import os
@@ -43,7 +43,6 @@ from detectron.core.config import cfg
 from detectron.utils.timer import Timer
 import detectron.datasets.dataset_catalog as dataset_catalog
 import detectron.utils.boxes as box_utils
-import detectron.utils.segms as segm_utils
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +66,7 @@ class JsonDataset(object):
         # Set up dataset classes
         category_ids = self.COCO.getCatIds()
         categories = [c['name'] for c in self.COCO.loadCats(category_ids)]
-        self.category_to_id_map = dict(zip(categories, category_ids))
+        self.category_to_id_map = dict(list(zip(categories, category_ids)))
         self.classes = ['__background__'] + categories
         self.num_classes = len(self.classes)
         self.json_category_id_to_contiguous_id = {
@@ -76,7 +75,7 @@ class JsonDataset(object):
         }
         self.contiguous_category_id_to_json_id = {
             v: k
-            for k, v in self.json_category_id_to_contiguous_id.items()
+            for k, v in list(self.json_category_id_to_contiguous_id.items())
         }
         self._init_keypoints()
 
@@ -168,8 +167,8 @@ class JsonDataset(object):
         width = entry['width']
         height = entry['height']
         for obj in objs:
-            # crowd regions are RLE encoded
-            if segm_utils.is_poly(obj['segmentation']):
+            # crowd regions are RLE encoded and stored as dicts
+            if isinstance(obj['segmentation'], list):
                 # Valid polygons have >= 3 points, so require >= 6 coordinates
                 obj['segmentation'] = [
                     p for p in obj['segmentation'] if len(p) >= 6
@@ -251,7 +250,7 @@ class JsonDataset(object):
     ):
         """Add proposals from a proposals file to an roidb."""
         logger.info('Loading proposals from: {}'.format(proposal_file))
-        with open(proposal_file, 'r') as f:
+        with open(proposal_file, 'rb') as f:
             proposals = pickle.load(f)
         id_field = 'indexes' if 'indexes' in proposals else 'ids'  # compat fix
         _sort_proposals(proposals, id_field)
@@ -293,7 +292,7 @@ class JsonDataset(object):
         if 'keypoints' in cat_info[0]:
             keypoints = cat_info[0]['keypoints']
             self.keypoints_to_id_map = dict(
-                zip(keypoints, range(len(keypoints))))
+                list(zip(keypoints, list(range(len(keypoints))))))
             self.keypoints = keypoints
             self.num_keypoints = len(keypoints)
             self.keypoint_flip_map = {

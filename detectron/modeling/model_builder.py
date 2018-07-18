@@ -30,10 +30,10 @@ A given model is made by combining many basic components. The result is flexible
 though somewhat complex to understand at first.
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
+
 
 import copy
 import importlib
@@ -55,6 +55,7 @@ import detectron.modeling.rfcn_heads as rfcn_heads
 import detectron.modeling.rpn_heads as rpn_heads
 import detectron.roi_data.minibatch as roi_data_minibatch
 import detectron.utils.c2 as c2_utils
+from detectron.utils.py3compat import bytes2string
 
 logger = logging.getLogger(__name__)
 
@@ -129,6 +130,7 @@ def get_func(func_name):
     function in this module or the path to a function relative to the base
     'modeling' module.
     """
+    func_name = bytes2string(func_name)
     if func_name == '':
         return None
     new_func_name = name_compat.get_new_name(func_name)
@@ -219,7 +221,7 @@ def build_generic_detection_model(
 
         if model.train:
             loss_gradients = {}
-            for lg in head_loss_gradients.values():
+            for lg in list(head_loss_gradients.values()):
                 if lg is not None:
                     loss_gradients.update(lg)
             return loss_gradients

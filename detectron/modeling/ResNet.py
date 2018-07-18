@@ -18,10 +18,10 @@
 See: https://arxiv.org/abs/1512.03385, https://arxiv.org/abs/1611.05431.
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
+
 
 from detectron.core.config import cfg
 from detectron.utils.net import get_group_gn
@@ -88,11 +88,10 @@ def add_stage(
     return blob_in, dim_in
 
 
-def add_ResNet_convX_body(model, block_counts):
+def add_ResNet_convX_body(model, block_counts, freeze_at=2):
     """Add a ResNet body from input data up through the res5 (aka conv5) stage.
     The final res5/conv5 stage may be optionally excluded (hence convX, where
     X = 4 or 5)."""
-    freeze_at = cfg.TRAIN.FREEZE_AT
     assert freeze_at in [0, 2, 3, 4, 5]
 
     # add the stem (by default, conv1 and pool1 with bn; can support gn)

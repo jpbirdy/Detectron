@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 # Copyright (c) 2017-present, Facebook, Inc.
 #
@@ -25,10 +25,10 @@ https://caffe2.ai/docs/tutorial-loading-pre-trained-models.html) for loading
 the converted model, and run_model_pb() for running the model for inference.
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
+
 
 import argparse
 import copy
@@ -453,7 +453,7 @@ def run_model_pb(args, net, init_net, im, check_blobs):
     gpu_blobs = []
     if args.device == 'gpu':
         gpu_blobs = ['data']
-    for k, v in input_blobs.items():
+    for k, v in list(input_blobs.items()):
         workspace.FeedBlob(
             core.ScopedName(k),
             v,

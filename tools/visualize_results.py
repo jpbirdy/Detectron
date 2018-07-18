@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 # Copyright (c) 2017-present, Facebook, Inc.
 #
@@ -17,13 +17,13 @@
 
 """Script for visualizing results saved in a detections.pkl file."""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
+
 
 import argparse
-import cPickle as pickle
+import pickle as pickle
 import cv2
 import os
 import sys
@@ -84,7 +84,7 @@ def vis(dataset, detections_pkl, thresh, output_dir, limit=0):
     ds = JsonDataset(dataset)
     roidb = ds.get_roidb()
 
-    with open(detections_pkl, 'r') as f:
+    with open(detections_pkl, 'rb') as f:
         dets = pickle.load(f)
 
     assert all(k in dets for k in ['all_boxes', 'all_segms', 'all_keyps']), \

@@ -15,10 +15,10 @@
 
 """Defines DetectionModelHelper, the class that represents a Detectron model."""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
+
 
 import numpy as np
 import logging
@@ -364,7 +364,7 @@ class DetectionModelHelper(cnn.CNNModelHelper):
         kernel = np.zeros(
             (dim_in, dim_out, kernel_size, kernel_size), dtype=np.float32
         )
-        kernel[range(dim_out), range(dim_in), :, :] = bil_filt
+        kernel[list(range(dim_out)), list(range(dim_in)), :, :] = bil_filt
 
         blob = self.ConvTranspose(
             blob_in,
@@ -446,7 +446,7 @@ class DetectionModelHelper(cnn.CNNModelHelper):
 
         blob_out = self.SpatialGN(
             conv_blob, prefix + suffix,
-            dim_out, group=group_gn,  # op's arg name is "group"
+            dim_out, num_groups=group_gn,
             epsilon=cfg.GROUP_NORM.EPSILON,)
 
         self.gn_params.append(self.params[-1])  # add gn's bias to list

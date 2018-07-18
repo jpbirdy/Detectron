@@ -15,10 +15,10 @@
 
 """Minibatch construction for Region Proposal Networks (RPN)."""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
+
 
 import logging
 import numpy as np
@@ -89,6 +89,12 @@ def add_rpn_blobs(blobs, im_scales, roidb):
             (entry['gt_classes'] > 0) & (entry['is_crowd'] == 0)
         )[0]
         gt_rois = entry['boxes'][gt_inds, :] * scale
+        # TODO(rbg): gt_boxes is poorly named;
+        # should be something like 'gt_rois_info'
+        gt_boxes = blob_utils.zeros((len(gt_inds), 6))
+        gt_boxes[:, 0] = im_i  # batch inds
+        gt_boxes[:, 1:5] = gt_rois
+        gt_boxes[:, 5] = entry['gt_classes'][gt_inds]
         im_info = np.array([[im_height, im_width, scale]], dtype=np.float32)
         blobs['im_info'].append(im_info)
 
@@ -99,17 +105,17 @@ def add_rpn_blobs(blobs, im_scales, roidb):
                 im_height, im_width, foas, all_anchors, gt_rois
             )
             for i, lvl in enumerate(range(k_min, k_max + 1)):
-                for k, v in rpn_blobs[i].items():
+                for k, v in list(rpn_blobs[i].items()):
                     blobs[k + '_fpn' + str(lvl)].append(v)
         else:
             # Classical RPN, applied to a single feature level
             rpn_blobs = _get_rpn_blobs(
                 im_height, im_width, [foa], all_anchors, gt_rois
             )
-            for k, v in rpn_blobs.items():
+            for k, v in list(rpn_blobs.items()):
                 blobs[k].append(v)
 
-    for k, v in blobs.items():
+    for k, v in list(blobs.items()):
         if isinstance(v, list) and len(v) > 0:
             blobs[k] = np.concatenate(v)
 

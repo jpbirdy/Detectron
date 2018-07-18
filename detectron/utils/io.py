@@ -15,18 +15,19 @@
 
 """IO utilities."""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
-import cPickle as pickle
+
+
+
+
+import pickle
 import hashlib
 import logging
 import os
 import re
 import sys
-import urllib2
+import urllib
+from detectron.utils.py3compat import bytes2string
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +46,9 @@ def cache_url(url_or_file, cache_dir):
     path to the cached file. If the argument is not a URL, simply return it as
     is.
     """
+    url_or_file = bytes2string(url_or_file)
+    cache_dir   = bytes2string(cache_dir)
+
     is_url = re.match(r'^(?:http)s?://', url_or_file, re.IGNORECASE) is not None
 
     if not is_url:
@@ -111,9 +115,12 @@ def download_url(
     Credit:
     https://stackoverflow.com/questions/2028517/python-urllib2-progress-hook
     """
-    response = urllib2.urlopen(url)
-    total_size = response.info().getheader('Content-Length').strip()
-    total_size = int(total_size)
+    response = urllib.request.urlopen(url)
+    try:
+        total_size = response.info().getheader('Content-Length')  # python 2
+    except AttributeError:
+        total_size = response.info()['Content-Length']  # python 3
+    total_size = int(total_size.strip())
     bytes_so_far = 0
 
     with open(dst_file_path, 'wb') as f:
@@ -132,7 +139,7 @@ def download_url(
 def _get_file_md5sum(file_name):
     """Compute the md5 hash of a file."""
     hash_obj = hashlib.md5()
-    with open(file_name, 'r') as f:
+    with open(file_name, 'rb') as f:
         hash_obj.update(f.read())
     return hash_obj.hexdigest()
 
@@ -140,5 +147,5 @@ def _get_file_md5sum(file_name):
 def _get_reference_md5sum(url):
     """By convention the md5 hash for url is stored in url + '.md5sum'."""
     url_md5sum = url + '.md5sum'
-    md5sum = urllib2.urlopen(url_md5sum).read().strip()
+    md5sum = urllib.request.urlopen(url_md5sum).read().strip()
     return md5sum
